@@ -22,6 +22,7 @@ public class LecturerController : Controller
     // Submit a new claim
     [HttpPost]
     public IActionResult SubmitClaim(Claim claim)
+
     {
         if (ModelState.IsValid)
         {
