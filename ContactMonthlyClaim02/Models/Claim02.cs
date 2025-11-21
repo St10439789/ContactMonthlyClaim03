@@ -2,7 +2,7 @@
 {
     public class ClaimViewModel
     {
-        public int Id { get; set; }
+        public int Id { get; set; } 
         public string LecturerName { get; set; }
         public int Hours { get; set; }
         public int Sessions { get; set; } 
