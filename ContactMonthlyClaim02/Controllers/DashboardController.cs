@@ -21,6 +21,12 @@ namespace ContactMonthlyClaim02.Controllers
             return View();
         }
 
+        public IActionResult HR_Dashboard()
+        {
+            return View();
+        }
+
+
     }
 }
 

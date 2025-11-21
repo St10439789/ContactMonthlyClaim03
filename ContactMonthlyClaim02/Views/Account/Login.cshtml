@@ -8,7 +8,7 @@
             <div class="card shadow-sm p-4">
                 <h4 class="text-center mb-3">🔐 Sign In</h4>
 
-                <form asp-action="Login" method="post">
+                <form id="loginForm" method="post">
                     <div class="mb-3">
                         <label for="Email" class="form-label">Email</label>
                         <input type="email" class="form-control" id="Email" name="Email" required />
@@ -35,4 +35,33 @@
         </div>
     </div>
 </div>
+
+<script>
+    const form = document.getElementById('loginForm');
+    form.addEventListener('submit', function(e) {
+        e.preventDefault(); // Prevent default form submission
+
+        const role = document.getElementById('Role').value;
+
+        if (!role) {
+            alert("Please select a role!");
+            return;
+        }
+
+        // Redirect based on role
+        switch (role) {
+            case "Lecturer":
+                window.location.href = '/Lecturer/Dashboard';
+                break;
+            case "Coordinator":
+                window.location.href = '/Coordinator/Dashboard';
+                break;
+            case "Manager":
+                window.location.href = '/AcademicManager/Dashboard';
+                break;
+            default:
+                alert("Invalid role selected!");
+        }
+    });
+</script>
 

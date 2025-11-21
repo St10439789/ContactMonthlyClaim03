@@ -66,13 +66,29 @@
             text-align: center;
             color: #555;
         }
+
+        .btn-back {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 8px 16px;
+        }
+
+            .btn-back:hover {
+                background-color: #0056b3;
+            }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="page-title mt-4 mb-4">
+      
+        <div class="page-title mt-4 mb-4 d-flex justify-content-between align-items-center">
             <h2>💼 Lecturer Dashboard</h2>
-            <span class="text-muted">@DateTime.Now.ToString("dd MMM yyyy")</span>
+            <div>
+                <span class="text-muted me-3">@DateTime.Now.ToString("dd MMM yyyy")</span>
+                <a href="/Home/Index" class="btn btn-back">🏠 Back to Home</a>
+            </div>
         </div>
 
         @if (TempData["Message"] != null)
@@ -83,6 +99,7 @@
             </div>
         }
 
+     
         <div class="dashboard-card">
             <div class="row mb-4">
                 <div class="col-md-6 mb-2">
@@ -90,8 +107,7 @@
                         ➕ Submit New Claim
                     </button>
                 </div>
-
-               
+            </div>
 
             <h5 class="mb-3">📄 My Claims</h5>
 
@@ -127,203 +143,7 @@
 
     </div>
 
-    <!-- Submit Claim Modal -->
-    <div class="modal fade" id="submitClaimModal" tabindex="-1" aria-labelledby="submitClaimModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content p-3">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="submitClaimModalLabel">Submit New Claim</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-
-                <div class="modal-body">
-                    <form asp-action="SubmitClaim" asp-controller="Lecturer" method="post" enctype="multipart/form-data">
-                        <div class="mb-3">
-                            <label class="form-label">Month</label>
-                            <select class="form-select" name="Month" required>
-                                <option selected disabled>Select Month</option>
-                                <option>January</option>
-                                <option>February</option>
-                                <option>March</option>
-                                <option>April</option>
-                                <option>May</option>
-                                <option>June</option>
-                                <option>July</option>
-                                <option>August</option>
-                                <option>September</option>
-                                <option>October</option>
-                                <option>November</option>
-                                <option>December</option>
-                            </select>
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label">Year</label>
-                            <input type="number" class="form-control" name="Year" value="2025" min="2000" required />
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label">Hours Worked</label>
-                            <input type="number" class="form-control" name="HoursWorked" min="0" required />
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label">Hourly Rate (R)</label>
-                            <input type="number" class="form-control" name="HourlyRate" min="0" step="0.01" required />
-                        </div>
-
-                        <div class="mb-3">
-                            <label class="form-label">Additional Notes</label>
-                            <textarea class="form-control" name="Notes" rows="3" placeholder="Add any additional details..."></textarea>
-                        </div>
-
-                        <div class="dashboard-card">
-                            <div class="row mb-4 justify-content-center">
-                                <div class="col-md-6 mb-2">
-                                    <form asp-action="UploadDocument" asp-controller="Lecturer" enctype="multipart/form-data" method="post" id="uploadForm">
-                                        <div class="file-upload-box border border-2 border-primary rounded p-4 text-center bg-light" id="dropZone">
-                                            <p class="fw-semibold mb-2">📁 Upload Files <span class="text-muted">or drag & drop here</span></p>
-                                            <input type="file" id="fileInput" name="fileUpload" multiple hidden required />
-                                            <button type="button" class="btn btn-outline-primary btn-lg" id="chooseFilesBtn">Choose Files</button>
-
-                                            <div id="fileList" class="mt-3 text-start small"></div>
-                                        </div>
-
-                                        <div class="d-grid mt-4">
-                                            <button type="submit" class="btn btn-primary btn-lg w-100">Upload Files</button>
-                                        </div>
-
-                                        <div id="uploadMessage" class="alert alert-success mt-3 d-none" role="alert">
-                                            ✅ Your files have been submitted successfully!
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-
-                        <script>
-                            const fileInput = document.getElementById('fileInput');
-                            const chooseFilesBtn = document.getElementById('chooseFilesBtn');
-                            const fileList = document.getElementById('fileList');
-                            const uploadForm = document.getElementById('uploadForm');
-                            const uploadMessage = document.getElementById('uploadMessage');
-                            const dropZone = document.getElementById('dropZone');
-
-                            chooseFilesBtn.addEventListener('click', () => fileInput.click());
-                            fileInput.addEventListener('change', updateFileList);
-
-                            // Update file list display
-                            function updateFileList() {
-                              fileList.innerHTML = '';
-                              Array.from(fileInput.files).forEach((file, index) => {
-                                const item = document.createElement('div');
-                                item.classList.add('d-flex', 'justify-content-between', 'align-items-center', 'mb-1');
-                                item.innerHTML = `
-                                  <span>${file.name}</span>
-                                  <button type="button" class="btn btn-sm btn-danger remove-btn" data-index="${index}">✖</button>
-                                `;
-                                fileList.appendChild(item);
-                              });
-                            }
-
-                            // Remove file before upload
-                            fileList.addEventListener('click', (e) => {
-                              if (e.target.classList.contains('remove-btn')) {
-                                const index = e.target.dataset.index;
-                                const dt = new DataTransfer();
-                                const files = Array.from(fileInput.files);
-                                files.splice(index, 1);
-                                files.forEach(f => dt.items.add(f));
-                                fileInput.files = dt.files;
-                                updateFileList();
-                              }
-                            });
-
-                            // Drag and drop support
-                            dropZone.addEventListener('dragover', e => {
-                              e.preventDefault();
-                              dropZone.classList.add('bg-primary', 'text-white');
-                            });
-                            dropZone.addEventListener('dragleave', () => dropZone.classList.remove('bg-primary', 'text-white'));
-                            dropZone.addEventListener('drop', e => {
-                              e.preventDefault();
-                              dropZone.classList.remove('bg-primary', 'text-white');
-                              const dt = new DataTransfer();
-                              Array.from(fileInput.files).forEach(f => dt.items.add(f));
-                              Array.from(e.dataTransfer.files).forEach(f => dt.items.add(f));
-                              fileInput.files = dt.files;
-                              updateFileList();
-                            });
-
-                            // Show success message
-                            uploadForm.addEventListener('submit', (e) => {
-                              e.preventDefault();
-                              uploadMessage.classList.remove('d-none');
-                              uploadMessage.scrollIntoView({ behavior: 'smooth' });
-                              setTimeout(() => uploadMessage.classList.add('d-none'), 4000);
-                              uploadForm.reset();
-                              fileList.innerHTML = '';
-                            });
-                        </script>
-
-                        <style>
-                            .file-upload-box {
-                                cursor: pointer;
-                                transition: all 0.2s ease;
-                            }
-
-                                .file-upload-box:hover {
-                                    background-color: #eaf3ff;
-                                }
-
-                            .remove-btn {
-                                font-size: 12px;
-                                padding: 2px 6px;
-                            }
-                        </style>
-
-
-
-                        <button type="submit" class="btn btn-success w-100">Submit Claim</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Claim View Modal -->
-    <div class="modal fade" id="viewClaimModal" tabindex="-1" aria-labelledby="viewClaimModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content p-3">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="viewClaimModalLabel">Claim Details</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <p><strong>Claim ID:</strong> <span id="claimId"></span></p>
-                    <p><strong>Status:</strong> <span id="claimStatus"></span></p>
-                    <p><strong>Submitted Date:</strong> 01 Sep 2025</p>
-                    <p><strong>Hours:</strong> 8</p>
-                    <p><strong>Total:</strong> R400</p>
-                    <hr />
-                    <p class="text-muted">If your claim is pending, it’s under review. Approved claims will appear in your payment history.</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        const modal = document.getElementById('viewClaimModal');
-        modal.addEventListener('show.bs.modal', event => {
-            const button = event.relatedTarget;
-            const claimId = button.getAttribute('data-claim');
-            document.getElementById('claimId').textContent = claimId;
-            const row = button.closest('tr');
-            const status = row.querySelector('td:nth-child(9)').textContent.trim();
-            document.getElementById('claimStatus').textContent = status;
-        });
-    </script>
+  
 </body>
 </html>
 
